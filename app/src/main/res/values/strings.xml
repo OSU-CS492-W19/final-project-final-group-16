@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">star-wars-app</string>
+
+        <string name="loading_error_message">Woops.  We couldn\'t load your item.  Check your internet connection and try again.</string>
+
+        <string name="forecast_item_details">%1$s</string>
+
+        <string name="search_box_hint">Search The Universe</string>
+        <string name="search_button_text">Search</string>
+        <string name="loading_error">Unable to run query.  Check internet.</string>
+
+        <!-- Strings for resource preference -->
+        <string-array name="resources">
+            <item>People</item>
+            <item>Planets</item>
+            <item>Films</item>
+        </string-array>
 </resources>
