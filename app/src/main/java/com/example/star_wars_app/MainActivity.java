@@ -1,21 +1,27 @@
 package com.example.star_wars_app;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
+import com.example.star_wars_app.utils.NetworkUtils;
 import com.example.star_wars_app.utils.SWAPIUtils;
 
 
@@ -63,6 +69,25 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
     @NonNull
     @Override
     public Loader<String> onCreateLoader(int i, @Nullable Bundle bundle) {
@@ -96,6 +121,7 @@ public class MainActivity extends AppCompatActivity
         mLoadingPB.setVisibility(View.VISIBLE);
         mSearchRV.setVisibility(View.INVISIBLE);
         getSupportLoaderManager().restartLoader(RESOURCE_SEARCH_LOADER_ID, args, this);
+
     }
 
 

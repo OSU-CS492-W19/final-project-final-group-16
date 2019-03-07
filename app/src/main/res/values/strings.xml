@@ -9,6 +9,28 @@
         <string name="search_button_text">Search</string>
         <string name="loading_error">Unable to run query.  Check internet.</string>
 
+    <!-- Strings for sort-by preference -->
+    <string name="pref_sort_key" translatable="false">pref_sort</string>
+    <string name="pref_sort_title">Search</string>
+    <string name="pref_sort_entry_best_match">People</string>
+    <string name="pref_sort_entry_stars">Planets</string>
+    <string name="pref_sort_value_stars" translatable="false">planets</string>
+    <string name="pref_sort_entry_forks">Films</string>
+    <string name="pref_sort_value_forks" translatable="false">films</string>
+    <string name="pref_sort_default">people</string>
+
+    <!-- Strings for programming language preference -->
+    <string name="pref_language_key" translatable="false">pref_language</string>
+    <string name="pref_language_title">Language</string>
+    <string name="pref_language_default">English</string>
+    <string name="pref_language_entry_any">English</string>
+    <string name="pref_language_entry_c">Wookie</string>
+    <string name="pref_language_value_c" translatable="false">wookie</string>
+
+    <!-- Strings for user preference -->
+    <string name="pref_user_key" translatable="false">pref_user</string>
+    <string name="pref_user_title">Login</string>
+
         <!-- Strings for resource preference -->
         <string-array name="resources">
             <item>People</item>
