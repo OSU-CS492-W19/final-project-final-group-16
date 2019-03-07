@@ -145,6 +145,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onForecastItemClick(SWAPIUtils.PersonResource forecastItem) {
-
+        Intent intent = new Intent(this, ResourceDetailActivity.class);
+        intent.putExtra(SWAPIUtils.EXTRA_RESOURCE, forecastItem);
+        startActivity(intent);
     }
 }
