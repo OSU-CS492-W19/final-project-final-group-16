@@ -28,6 +28,9 @@ import com.example.star_wars_app.utils.SWAPIUtils;
 public class MainActivity extends AppCompatActivity
         implements PersonAdapter.OnForecastItemClickListener, LoaderManager.LoaderCallbacks<String> {
 
+    private SharedPreferences settings;
+    private SharedPreferences.OnSharedPreferenceChangeListener listener;
+
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String SEARCH_URL_KEY = "resourceSearchURL";
     private static final int RESOURCE_SEARCH_LOADER_ID = 0;
@@ -42,6 +45,20 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        settings = PreferenceManager.getDefaultSharedPreferences(this);
+        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                // Refresh display
+            }
+        };
+
+        settings.registerOnSharedPreferenceChangeListener(listener);
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -81,6 +98,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_settings:
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
+                return true;
+            case R.id.action_favorite:
+                Intent favIntent = new Intent(this, FavoritesActivity.class);
+                startActivity(favIntent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
