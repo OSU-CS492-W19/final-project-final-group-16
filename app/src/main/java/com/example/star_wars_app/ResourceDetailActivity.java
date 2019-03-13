@@ -19,7 +19,7 @@ public class ResourceDetailActivity extends AppCompatActivity {
 
     private TextView mTempDescriptionTV;
 
-    private SWAPIUtils.PersonResource mForecastItem;
+    private SWAPIUtils.GenericResource mResource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,10 +30,10 @@ public class ResourceDetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra(SWAPIUtils.EXTRA_RESOURCE)) {
-            mForecastItem = (SWAPIUtils.PersonResource)intent.getSerializableExtra(
+            mResource = (SWAPIUtils.GenericResource)intent.getSerializableExtra(
                     SWAPIUtils.EXTRA_RESOURCE
             );
-            fillInLayout(mForecastItem);
+            fillInLayout(mResource);
         }
     }
 
@@ -54,9 +54,9 @@ public class ResourceDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void fillInLayout(SWAPIUtils.PersonResource forecastItem) {
+    private void fillInLayout(SWAPIUtils.GenericResource resource) {
 
-        String detailString = getString(R.string.forecast_item_details, forecastItem.name);
+        String detailString = getString(R.string.forecast_item_details, resource.getInfoString());
 
         mTempDescriptionTV.setText(detailString);
     }

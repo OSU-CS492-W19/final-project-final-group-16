@@ -1,14 +1,12 @@
 package com.example.star_wars_app;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -21,21 +19,20 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
-import com.example.star_wars_app.utils.NetworkUtils;
 import com.example.star_wars_app.utils.SWAPIUtils;
 
 
 public class MainActivity extends AppCompatActivity
-        implements PersonAdapter.OnForecastItemClickListener, LoaderManager.LoaderCallbacks<String> {
+        implements ResourceAdapter.OnResourceClickListener, LoaderManager.LoaderCallbacks<String> {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String SEARCH_URL_KEY = "resourceSearchURL";
     private static final int RESOURCE_SEARCH_LOADER_ID = 0;
 
-    private SWAPIUtils.PersonResource[] mPeople;
+    private SWAPIUtils.GenericResource[] mResources;
 
     private EditText mSearchBoxET;
-    private PersonAdapter mPersonAdapter;
+    private ResourceAdapter mResourceAdapter;
     private RecyclerView mSearchRV;
     private ProgressBar mLoadingPB;
     private Spinner mSpinner;
@@ -46,9 +43,9 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         mSearchBoxET = findViewById(R.id.et_search_box);
-        mPersonAdapter = new PersonAdapter(this);
+        mResourceAdapter = new ResourceAdapter(this);
         mSearchRV = findViewById(R.id.rv_search_results);
-        mSearchRV.setAdapter(mPersonAdapter);
+        mSearchRV.setAdapter(mResourceAdapter);
 
         mLoadingPB = findViewById(R.id.pb_loading);
 
@@ -113,7 +110,8 @@ public class MainActivity extends AppCompatActivity
         boolean searchInReadme = preferences.getBoolean(getString(R.string.pref_in_readme_key), false);
         */
 
-        String url = SWAPIUtils.buildSearch(query, "People");
+        String type = mSpinner.getSelectedItem().toString();
+        String url = SWAPIUtils.buildSearch(query, type);
         Log.d(TAG, "querying search URL: " + url);
 
         Bundle args = new Bundle();
@@ -129,10 +127,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(@NonNull Loader<String> loader, String s) {
         Log.d(TAG, "Got results from the loader");
+        String type = mSpinner.getSelectedItem().toString();
         if (s != null) {
             mSearchRV.setVisibility(View.VISIBLE);
-            mPeople = SWAPIUtils.parsePersonJSON(s);
-            mPersonAdapter.updatePeople(mPeople);
+            mResources = SWAPIUtils.parseJSON(s, type);
+            mResourceAdapter.updateResources(mResources);
         }
         mLoadingPB.setVisibility(View.INVISIBLE);
     }
@@ -144,9 +143,9 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    public void onForecastItemClick(SWAPIUtils.PersonResource forecastItem) {
+    public void onResourceClick(SWAPIUtils.GenericResource resource) {
         Intent intent = new Intent(this, ResourceDetailActivity.class);
-        intent.putExtra(SWAPIUtils.EXTRA_RESOURCE, forecastItem);
+        intent.putExtra(SWAPIUtils.EXTRA_RESOURCE, resource);
         startActivity(intent);
     }
 }

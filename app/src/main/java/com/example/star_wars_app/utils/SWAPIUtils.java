@@ -15,7 +15,7 @@ import java.util.TimeZone;
 
 public class SWAPIUtils {
 
-    public static final String EXTRA_RESOURCE = "com.example.android.lifecycleweather.utils.ForecastItem";
+    public static final String EXTRA_RESOURCE = "com.example.android.star_wars_app.utils.GenericResource";
 
     private final static String SWAPI_RESOURCE_BASE_URL = "https://swapi.co/api/";
     private final static String SWAPI_RESOURCE_SEARCH_PARAM = "search";
@@ -23,7 +23,13 @@ public class SWAPIUtils {
     private final static String SWAPI_RESOURCE_PEOPLE = "people";
     private final static String SWAPI_RESOURCE_PLANETS = "planets";
 
-    //private static String type = SWAPI_RESOURCE_PEOPLE;
+    public static class GenericSearchResult {
+        int count;
+        String next;
+        String previous;
+        //GenericResource[] results;
+    }
+
 
     public static class PeopleSearchResult implements Serializable {
         public int count;
@@ -46,11 +52,7 @@ public class SWAPIUtils {
         public FilmResource[] results;
     }
 
-    /*
-     * This class is used as a final representation of a single forecast item.  It condenses the
-     * classes below that are used for parsing the OWN JSON response with Gson.
-     */
-    public static class PersonResource implements Serializable {
+    public static class PersonResource extends GenericResource implements Serializable {
         public String birthYear;
         public String eyeColor;
         public String[] films;
@@ -63,10 +65,16 @@ public class SWAPIUtils {
         public String skinColor;
         public String[] species;
         public String url;
-
+        public String getInfoString() {
+            return this.name;
+        }
     }
 
-    public static class PlanetResource implements Serializable {
+    public static abstract class GenericResource implements Serializable {
+        public abstract String getInfoString();
+    }
+
+    public static class PlanetResource extends GenericResource implements Serializable {
         public String climate;
         public String created;
         public String diameter;
@@ -81,30 +89,31 @@ public class SWAPIUtils {
         public String surface_water;
         public String terrain;
         public String url;
+        public String getInfoString() {
+            return this.name;
+        }
     }
 
-    public static class FilmResource implements Serializable {
-        public String climate;
-        public String created;
-        public String diameter;
-        public String edited;
-        public String[] films;
-        public String gravity;
-        public String name;
-        public String orbital_period;
-        public String population;
-        public String[] residents;
-        public String rotation_period;
-        public String surface_water;
-        public String terrain;
+    public static class FilmResource extends GenericResource implements Serializable {
+        public String title;
+        public String episode_id;
+        public String opening_crawl;
+        public String director;
+        public String producer;
+        public String release_date;
+        public String[] character;
+        public String[] planets;
         public String url;
+        public String getInfoString() {
+            return this.title;
+        }
     }
 
-    public  static String buildSearch(String query, String type){
+    public static String buildSearch(String query, String type){
         String searchResource = "";
         if (type.equals("People"))
             searchResource = SWAPI_RESOURCE_PEOPLE;
-        if (type.equals("Planents"))
+        if (type.equals("Planets"))
             searchResource = SWAPI_RESOURCE_PLANETS;
         if (type.equals("Films"))
             searchResource = SWAPI_RESOURCE_FILM;
@@ -115,11 +124,25 @@ public class SWAPIUtils {
                 .toString();
     }
 
-    public static PersonResource[] parsePersonJSON(String json) {
+    public static GenericResource[] parseJSON(String json, String type) {
         Gson gson = new Gson();
-        PeopleSearchResult results = gson.fromJson(json, PeopleSearchResult.class);
-        if (results != null && results.results != null) {
-            return results.results;
+        GenericResource[] resources = null;
+        if(type.equals("People")){
+            PeopleSearchResult p = gson.fromJson(json, PeopleSearchResult.class);
+            if (p != null && p.results != null)
+                resources = p.results;
+        } else if(type.equals("Planets")){
+            PlanetSearchResult p = gson.fromJson(json, PlanetSearchResult.class);
+            if (p != null && p.results != null)
+                resources = p.results;
+        } else if(type.equals("Films")){
+            FilmSearchResult f = gson.fromJson(json, FilmSearchResult.class);
+            if (f != null && f.results != null)
+                resources = f.results;
+        }
+
+        if (resources != null) {
+            return resources;
         } else {
             return null;
         }
