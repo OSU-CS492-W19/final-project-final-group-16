@@ -33,15 +33,17 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String SEARCH_URL_KEY = "resourceSearchURL";
+    private static final String SEARCH_TYPE_KEY = "resourceSearchType";
     private static final int RESOURCE_SEARCH_LOADER_ID = 0;
 
     private SWAPIUtils.PersonResource[] mPeople;
+    private SWAPIUtils.PlanetResource[] mPlanets;
+    private SWAPIUtils.FilmResource[] mFilms;
 
     private EditText mSearchBoxET;
     private PersonAdapter mPersonAdapter;
     private RecyclerView mSearchRV;
     private ProgressBar mLoadingPB;
-    private Spinner mSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +73,6 @@ public class MainActivity extends AppCompatActivity
 
         mSearchRV.setLayoutManager(new LinearLayoutManager(this));
         mSearchRV.setHasFixedSize(true);
-
-        mSpinner = findViewById(R.id.resouce_spinner);
 
         Button searchButton = findViewById(R.id.btn_search);
         searchButton.setOnClickListener(new View.OnClickListener() {
@@ -113,32 +113,33 @@ public class MainActivity extends AppCompatActivity
     @Override
     public Loader<String> onCreateLoader(int i, @Nullable Bundle bundle) {
         String url = null;
+        String type = null;
         if (bundle != null) {
             url = bundle.getString(SEARCH_URL_KEY);
+            type = bundle.getString(SEARCH_TYPE_KEY);
         }
-        return new ResourceSearchLoader(this, url);
+        return new ResourceSearchLoader(this, url, type);
     }
 
     private void doSearch(String query) {
-        /*
-    }
-        String sort = preferences.getString(
-                getString(R.string.pref_sort_key), getString(R.string.pref_sort_default)
-        );
-        String language = preferences.getString(
-                getString(R.string.pref_language_key), getString(R.string.pref_language_default)
-        );
-        String user = preferences.getString(getString(R.string.pref_user_key), "");
-        boolean searchInName = preferences.getBoolean(getString(R.string.pref_in_name_key), true);
-        boolean searchInDescription = preferences.getBoolean(getString(R.string.pref_in_description_key), true);
-        boolean searchInReadme = preferences.getBoolean(getString(R.string.pref_in_readme_key), false);
-        */
 
-        String url = SWAPIUtils.buildSearch(query, "People");
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String searchType = sharedPreferences.getString(
+                getString(R.string.pref_sort_key),
+                getString(R.string.pref_sort_default)
+        );
+        String language = sharedPreferences.getString(
+                getString(R.string.pref_language_key),
+                getString(R.string.pref_language_default)
+        );
+
+        String url = SWAPIUtils.buildSearch(query, searchType);
         Log.d(TAG, "querying search URL: " + url);
 
         Bundle args = new Bundle();
         args.putString(SEARCH_URL_KEY, url);
+        args.putString(SEARCH_TYPE_KEY, searchType);
         mLoadingPB.setVisibility(View.VISIBLE);
         mSearchRV.setVisibility(View.INVISIBLE);
         getSupportLoaderManager().restartLoader(RESOURCE_SEARCH_LOADER_ID, args, this);
@@ -154,6 +155,19 @@ public class MainActivity extends AppCompatActivity
             mSearchRV.setVisibility(View.VISIBLE);
             mPeople = SWAPIUtils.parsePersonJSON(s);
             mPersonAdapter.updatePeople(mPeople);
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+            String searchType = sharedPreferences.getString(
+                    getString(R.string.pref_sort_key),
+                    getString(R.string.pref_sort_default)
+            );
+            if(searchType.equals("planets")){
+                mPlanets = SWAPIUtils.parsePlanetJSON(s);
+            } else if(searchType.equals("films")){
+                mFilms = SWAPIUtils.parseFilmJSON(s);
+            }
+
+
         }
         mLoadingPB.setVisibility(View.INVISIBLE);
     }
@@ -165,9 +179,24 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    public void onForecastItemClick(SWAPIUtils.PersonResource forecastItem) {
+    public void onForecastItemClick(int pos) {
         Intent intent = new Intent(this, ResourceDetailActivity.class);
-        intent.putExtra(SWAPIUtils.EXTRA_RESOURCE, forecastItem);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String searchType = sharedPreferences.getString(
+                getString(R.string.pref_sort_key),
+                getString(R.string.pref_sort_default)
+        );
+        if(searchType.equals("people")){
+            intent.putExtra(SWAPIUtils.EXTRA_RESOURCE, mPeople[pos]);
+            intent.putExtra(SWAPIUtils.EXTRA_TYPE, searchType);
+        } else if(searchType.equals("planets")){
+            intent.putExtra(SWAPIUtils.EXTRA_RESOURCE, mPlanets[pos]);
+            intent.putExtra(SWAPIUtils.EXTRA_TYPE, searchType);
+        } else {
+            intent.putExtra(SWAPIUtils.EXTRA_RESOURCE, mFilms[pos]);
+            intent.putExtra(SWAPIUtils.EXTRA_TYPE, searchType);
+        }
         startActivity(intent);
     }
 }
