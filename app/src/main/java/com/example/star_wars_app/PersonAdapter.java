@@ -15,7 +15,7 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
     private OnForecastItemClickListener mPersonClickListener;
 
     public interface OnForecastItemClickListener {
-        void onForecastItemClick(SWAPIUtils.PersonResource forecastItem);
+        void onForecastItemClick(int pos);
     }
 
     public PersonAdapter(OnForecastItemClickListener clickListener) {
@@ -65,8 +65,7 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
 
         @Override
         public void onClick(View v) {
-            SWAPIUtils.PersonResource forecastItem = mPeople[getAdapterPosition()];
-            mPersonClickListener.onForecastItemClick(forecastItem);
+            mPersonClickListener.onForecastItemClick(getAdapterPosition());
         }
     }
 }

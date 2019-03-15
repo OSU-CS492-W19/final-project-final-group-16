@@ -12,20 +12,22 @@
     <!-- Strings for sort-by preference -->
     <string name="pref_sort_key" translatable="false">pref_sort</string>
     <string name="pref_sort_title">Search</string>
-    <string name="pref_sort_entry_best_match">People</string>
-    <string name="pref_sort_entry_stars">Planets</string>
-    <string name="pref_sort_value_stars" translatable="false">planets</string>
-    <string name="pref_sort_entry_forks">Films</string>
-    <string name="pref_sort_value_forks" translatable="false">films</string>
+    <string name="pref_sort_entry_people">People</string>
+    <string name="pref_sort_value_people" translatable="false">people</string>
+    <string name="pref_sort_entry_planets">Planets</string>
+    <string name="pref_sort_value_planets" translatable="false">planets</string>
+    <string name="pref_sort_entry_films">Films</string>
+    <string name="pref_sort_value_films" translatable="false">films</string>
     <string name="pref_sort_default">people</string>
 
     <!-- Strings for programming language preference -->
     <string name="pref_language_key" translatable="false">pref_language</string>
     <string name="pref_language_title">Language</string>
     <string name="pref_language_default">English</string>
-    <string name="pref_language_entry_any">English</string>
-    <string name="pref_language_entry_c">Wookie</string>
-    <string name="pref_language_value_c" translatable="false">wookie</string>
+    <string name="pref_language_entry_english">English</string>
+    <string name="pref_language_value_english" translatable="false">english</string>
+    <string name="pref_language_entry_wook">Wookie</string>
+    <string name="pref_language_value_wook" translatable="false">wookie</string>
 
     <!-- Strings for user preference -->
     <string name="pref_user_key" translatable="false">pref_user</string>
@@ -37,4 +39,46 @@
             <item>Planets</item>
             <item>Films</item>
         </string-array>
+
+    <!--Strings for person detail view-->
+    <string name="name_tag">Name:</string>
+    <string name="year_tag">Birth Year:</string>
+    <string name="height_tag">Height:</string>
+    <string name="sex_tag">Sex:</string>
+    <string name="homeworld_tag">Homeworld:</string>
+
+    <string name="name_format">%1$s</string>
+    <string name="year_format">%1$s</string>
+    <string name="height_format">%1$s cm</string>
+    <string name="sex_format">%1$s</string>
+    <string name="homeworld_format">%1$s</string>
+
+    <!--Strings for planets detail view-->
+    <string name="planet_name_tag">Name:</string>
+    <string name="planet_climate_tag">Climate:</string>
+    <string name="planet_gravity_tag">Gravity:</string>
+    <string name="planet_diameter_tag">Diameter:</string>
+    <string name="planet_period_tag">Orbital Period:</string>
+    <string name="planet_population_tag">Population:</string>
+
+    <string name="planet_name_format">%1$s</string>
+    <string name="planet_climate_format">%1$s</string>
+    <string name="planet_gravity_format">%1$s Gs</string>
+    <string name="planet_diameter_format">%1$s Km</string>
+    <string name="planet_period_format">%1$s days</string>
+    <string name="planet_population_format">%1$s</string>
+
+    <!--Strings for films detail view-->
+    <string name="film_name_tag">Title:</string>
+    <string name="film_director_tag">Director:</string>
+    <string name="film_episode_tag">Episode Number:</string>
+    <string name="film_producer_tag">Producer(s):</string>
+    <string name="film_release_tag">Release Date:</string>
+
+    <string name="film_name_format">%1$s</string>
+    <string name="film_director_format">%1$s</string>
+    <string name="film_episode_format">%1$s</string>
+    <string name="film_producer_format">%1$s</string>
+    <string name="film_release_format">%1$s</string>
+
 </resources>

@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="pref_sort_entries">
-        <item>@string/pref_sort_entry_best_match</item>
-        <item>@string/pref_sort_entry_stars</item>
-        <item>@string/pref_sort_entry_forks</item>
+        <item>@string/pref_sort_entry_people</item>
+        <item>@string/pref_sort_entry_planets</item>
+        <item>@string/pref_sort_entry_films</item>
     </string-array>
 
     <string-array name="pref_sort_values">
-        <item></item>
-        <item>@string/pref_sort_value_stars</item>
-        <item>@string/pref_sort_value_forks</item>
+        <item>@string/pref_sort_value_people</item>
+        <item>@string/pref_sort_value_planets</item>
+        <item>@string/pref_sort_value_films</item>
     </string-array>
 
     <string-array name="pref_language_entries">
-        <item>@string/pref_language_entry_any</item>
-        <item>@string/pref_language_entry_c</item>
+        <item>@string/pref_language_entry_english</item>
+        <item>@string/pref_language_entry_wook</item>
     </string-array>
 
     <string-array name="pref_language_values">
-        <item></item>
-        <item>@string/pref_language_value_c</item>
+        <item>@string/pref_language_value_english</item>
+        <item>@string/pref_language_value_wook</item>
     </string-array>
 </resources>

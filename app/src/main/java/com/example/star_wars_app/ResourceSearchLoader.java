@@ -14,12 +14,17 @@ public class ResourceSearchLoader extends AsyncTaskLoader<String> {
 
     private String mWeatherSearchJSON;
     private String mURL;
+    private String mType;
 
-    ResourceSearchLoader(Context context, String url) {
+    ResourceSearchLoader(Context context, String url, String type) {
         super(context);
         mURL = url;
+        mType = type;
     }
 
+    public String getType(){
+        return mType;
+    }
     @Override
     protected void onStartLoading() {
         if (mURL != null) {
