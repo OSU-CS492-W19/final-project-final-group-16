@@ -1,5 +1,8 @@
 package com.example.star_wars_app;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
@@ -26,7 +29,7 @@ import com.example.star_wars_app.utils.SWAPIUtils;
 
 
 public class MainActivity extends AppCompatActivity
-        implements PersonAdapter.OnForecastItemClickListener, LoaderManager.LoaderCallbacks<String> {
+        implements PersonAdapter.OnForecastItemClickListener {
 
     private SharedPreferences settings;
     private SharedPreferences.OnSharedPreferenceChangeListener listener;
@@ -45,20 +48,13 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView mSearchRV;
     private ProgressBar mLoadingPB;
 
+    private ResourceViewModel mResourceVM;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        settings = PreferenceManager.getDefaultSharedPreferences(this);
-        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                // Refresh display
-            }
-        };
-
-        settings.registerOnSharedPreferenceChangeListener(listener);
 
 
         super.onCreate(savedInstanceState);
@@ -74,6 +70,22 @@ public class MainActivity extends AppCompatActivity
         mSearchRV.setLayoutManager(new LinearLayoutManager(this));
         mSearchRV.setHasFixedSize(true);
 
+        settings = PreferenceManager.getDefaultSharedPreferences(this);
+        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                String searchkey = sharedPreferences.getString(getString(R.string.pref_sort_key),
+                        getString(R.string.pref_sort_default));
+                mSearchBoxET.setHint("Search for " + searchkey);
+            }
+        };
+
+        String searchkey = sharedPreferences.getString(getString(R.string.pref_sort_key),
+                getString(R.string.pref_sort_default));
+        mSearchBoxET.setHint("Search for " + searchkey);
+        settings.registerOnSharedPreferenceChangeListener(listener);
+
+
         Button searchButton = findViewById(R.id.btn_search);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,6 +96,40 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+
+        mResourceVM = ViewModelProviders.of(this).get(ResourceViewModel.class);
+        mResourceVM.getSearchData().observe(this, new Observer<SWAPIUtils.PersonResource[]>() {
+            @Override
+            public void onChanged(@Nullable SWAPIUtils.PersonResource[] personResources) {
+                mPersonAdapter.updatePeople(personResources);
+                mPeople = personResources;
+            }
+        });
+        mResourceVM.getFilmData().observe(this, new Observer<SWAPIUtils.FilmResource[]>() {
+            @Override
+            public void onChanged(@Nullable SWAPIUtils.FilmResource[] filmResources) {
+                mFilms = filmResources;
+            }
+        });
+        mResourceVM.getPlanetData().observe(this, new Observer<SWAPIUtils.PlanetResource[]>() {
+            @Override
+            public void onChanged(@Nullable SWAPIUtils.PlanetResource[] planetResources) {
+                mPlanets = planetResources;
+            }
+        });
+
+        mResourceVM.getStatus().observe(this, new Observer<ResourceRepository.Status>() {
+            @Override
+            public void onChanged(@Nullable ResourceRepository.Status status) {
+                if (status == ResourceRepository.Status.LOADING){
+                    mLoadingPB.setVisibility(View.VISIBLE);
+                }else if (status == ResourceRepository.Status.SUCCESS){
+                    mLoadingPB.setVisibility(View.INVISIBLE);
+                    mSearchRV.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -109,18 +155,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    @NonNull
-    @Override
-    public Loader<String> onCreateLoader(int i, @Nullable Bundle bundle) {
-        String url = null;
-        String type = null;
-        if (bundle != null) {
-            url = bundle.getString(SEARCH_URL_KEY);
-            type = bundle.getString(SEARCH_TYPE_KEY);
-        }
-        return new ResourceSearchLoader(this, url, type);
-    }
-
     private void doSearch(String query) {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -136,45 +170,8 @@ public class MainActivity extends AppCompatActivity
 
         String url = SWAPIUtils.buildSearch(query, searchType);
         Log.d(TAG, "querying search URL: " + url);
+        mResourceVM.loadResources(url, searchType);
 
-        Bundle args = new Bundle();
-        args.putString(SEARCH_URL_KEY, url);
-        args.putString(SEARCH_TYPE_KEY, searchType);
-        mLoadingPB.setVisibility(View.VISIBLE);
-        mSearchRV.setVisibility(View.INVISIBLE);
-        getSupportLoaderManager().restartLoader(RESOURCE_SEARCH_LOADER_ID, args, this);
-
-    }
-
-
-
-    @Override
-    public void onLoadFinished(@NonNull Loader<String> loader, String s) {
-        Log.d(TAG, "Got results from the loader");
-        if (s != null) {
-            mSearchRV.setVisibility(View.VISIBLE);
-            mPeople = SWAPIUtils.parsePersonJSON(s);
-            mPersonAdapter.updatePeople(mPeople);
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-            String searchType = sharedPreferences.getString(
-                    getString(R.string.pref_sort_key),
-                    getString(R.string.pref_sort_default)
-            );
-            if(searchType.equals("planets")){
-                mPlanets = SWAPIUtils.parsePlanetJSON(s);
-            } else if(searchType.equals("films")){
-                mFilms = SWAPIUtils.parseFilmJSON(s);
-            }
-
-
-        }
-        mLoadingPB.setVisibility(View.INVISIBLE);
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<String> loader) {
-        // Nothing to do here...
     }
 
 
