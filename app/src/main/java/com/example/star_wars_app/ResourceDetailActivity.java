@@ -1,6 +1,7 @@
 package com.example.star_wars_app;
 
 import android.content.Intent;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -9,6 +10,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.example.star_wars_app.utils.SWAPIUtils;
+
+import java.text.DateFormat;
 
 public class ResourceDetailActivity extends AppCompatActivity {
 
@@ -85,19 +88,45 @@ public class ResourceDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.forecast_item_detail, menu);
+        getMenuInflater().inflate(R.menu.resource_detail, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            //case R.id.action_share:
-            //    shareForecast();
-            //    return true;
+            case R.id.action_share:
+                shareForecast();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void shareForecast() {
+        if (!mType.isEmpty()) {
+            String shareText = createShareString(mType);
+            ShareCompat.IntentBuilder.from(this)
+                    .setType("text/plain")
+                    .setText(shareText)
+                    .setChooserTitle(R.string.share_chooser_title)
+                    .startChooser();
+        }
+    }
+
+    public String createShareString(String type){
+        String sharetxt = "";
+        if (type.equals("films")){
+            sharetxt = String.format("Checkout my favorite Star Wars movie: %s!" +
+                    " Did you know it was directed by: %s?", mFilm.title, mFilm.director);
+        }else if (type.equals("planets")){
+            sharetxt = String.format("Did you know that the planet %s from Star Wars has "+
+             "an orbital period of %s days?", mPlanet.name, mPlanet.orbital_period);
+        }else{
+            sharetxt = String.format("My favorite star wars character is %s cm tall! Can you guess who it is?",
+                    mPerson.height);
+        }
+        return sharetxt;
     }
 
     private void fillInLayout(SWAPIUtils.PersonResource person) {
