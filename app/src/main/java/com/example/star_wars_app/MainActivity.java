@@ -145,10 +145,10 @@ public class MainActivity extends AppCompatActivity
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
-            case R.id.action_favorite:
-                Intent favIntent = new Intent(this, FavoritesActivity.class);
-                startActivity(favIntent);
-                return true;
+//            case R.id.action_favorite:
+//                Intent favIntent = new Intent(this, FavoritesActivity.class);
+//                startActivity(favIntent);
+//                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

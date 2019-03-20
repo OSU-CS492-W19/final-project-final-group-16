@@ -83,4 +83,7 @@
     <string name="film_producer_format">%1$s</string>
     <string name="film_release_format">%1$s</string>
 
+    <string name="action_share">share</string>
+    <string name="share_chooser_title">Share a fact with your friends!</string>
+
 </resources>
